@@ -1,18 +1,47 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <h1>Bienvenido {{ user.email }}</h1>
+    <button @click="Salir"> salir</button>
+    <div>
+      <h1>
+        Mis imagenes
+      </h1>
+    </div>
+
+    
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
 export default {
-  name: 'Home',
-  components: {
-    HelloWorld
+  name: "Home",
+  data() {
+    return {
+      user: {}
+    }
+  },
+
+  mounted(){
+    this.user = JSON.parse(localStorage.getItem('user'))
+    const token = localStorage.getItem('token')
+
+    fetch('http://localhost:1337/imagenes/me', {
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    })
+      .then(res => res.json())
+      .then(data =>{
+        console.log(data)
+      })
+  },
+  
+  methods: {
+    salir(){
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      this.$router.push('/login')
+    }
   }
-}
+};
 </script>
